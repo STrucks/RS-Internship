@@ -6,21 +6,14 @@ Created on Thu Oct 11 19:50:50 2018
 """
 
 import torch
-from sklearn.datasets import load_digits
 import numpy as np
 from torch.autograd import Variable
 from sklearn.metrics import accuracy_score
 from ZSL_models import RelationNetwork, AttributeNetwork
-
-def one_hot(labels, nr_classes):
-    _labels = []
-    for l in labels:
-        _labels.append([0]*nr_classes)
-        _labels[-1][l] = 1
-    return np.asarray(_labels)
+from load_data import load_MNIST_ZSL
 
 
-digits = load_digits()
+
 # atributes CxA matrix with attributes: (1) has corners, (2) has vertical lines, (3) has horizontal lines, (4) has circle, (5) has curves
 attributes = [[0,0.5,0.5,1,1],[1,1,0,0,0],[1,0,1,0,1],[0,0.5,0.8,0,1],[1,1,1,0,0],[1,1,1,0,1],[0,0.5,0.5,1,1],[1,0.8,1,0,0],[0,0.5,0.5,1,1], [0,0.5,0,1,1]]
 attributes = np.asarray([np.asarray(row) for row in attributes])
@@ -28,13 +21,10 @@ attributes = np.asarray([np.asarray(row) for row in attributes])
 #plt.imshow(digits['images'][104])
 #print(digits['target'][104])
 
-data = [np.reshape(img,newshape=(1,8*8)) for img in digits['images']]
-data = [d[0] for d in data]
-labels = digits['target']
 
-train, test = np.asarray(data[0:int(0.8*len(data))]), np.asarray(data[int(0.8*len(data)):])
-train_labels , test_labels = np.asarray(labels[0:int(0.8*len(labels))]), np.asarray(labels[int(0.8*len(labels)):])
-OH_train_labels, OH_test_labels = one_hot(np.asarray(labels[0:int(0.8*len(labels))]), 10), one_hot(np.asarray(labels[int(0.8*len(labels)):]), 10)
+#(train, train_labels, OH_train_labels), (test, test_labels, OH_test_labels) = load_MNIST()
+(train, train_labels, OH_train_labels), (test, test_labels, OH_test_labels) = load_MNIST_ZSL(without = [7,8,9])
+
 
 # number of neurons in each layer
 input_num_units = 8*8
