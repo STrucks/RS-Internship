@@ -96,7 +96,7 @@ def split_train_test(data, classes=[1,2,3,4,5,6,7,11]):
     return (train, label_train, OH_train_labels), (test, label_test, OH_test_labels)
 
 
-def load_hyp_spectral(without = [15, 16]):
+def load_hyp_spectral_splitted(without = [15, 16]):
     from scipy.io import loadmat
     
     f = loadmat("data/indian_pines.mat")
@@ -121,8 +121,24 @@ def load_hyp_spectral(without = [15, 16]):
     return split_train_test(data, classes = with_class)#(train, label_train), (test, label_test)
     
 
-
-
+def load_hyp_spectral():
+    from scipy.io import loadmat
+    f = loadmat("data/indian_pines.mat")
+    raw_data = f['indian_pines']
+    
+    f = loadmat("data/indian_pines_gt.mat")
+    GT = f['indian_pines_gt']
+    
+    data = {}
+    
+    for row in range(len(GT)):
+        for col in range(len(GT[row,:])):
+            if str(GT[row,col]) in data:
+                data[str(GT[row,col])].append(raw_data[row, col, :])
+            else:
+                data[str(GT[row, col])] = []
+                data[str(GT[row, col])].append(raw_data[row, col, :])
+    return data
 
 
 

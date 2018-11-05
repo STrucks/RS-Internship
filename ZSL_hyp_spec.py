@@ -22,36 +22,47 @@ from load_data import load_hyp_spectral
 
 
 # lets start with random attributes CxA, C is number of classes, A is number of attributes:
-attributes = np.random.rand(16, 10)
+# attributes = np.random.rand(16, 10)
+# or assume no attribues:
+attributes = np.zeros(shape=(16, 10))
 #import matplotlib.pyplot as plt
 #plt.imshow(digits['images'][104])
 #print(digits['target'][104])
 
+# use simple features:
+attributes = {}
+with open("hyp_simple_features.txt", 'r') as f:
+    data = f.readlines()
+    for line in data:
+        label, features = line.split(":")
+        values = [float(v) for v in features.replace("\n", "").split(",")]
+        attributes[int(label)] = values
+#print(attributes)
 
 #(train, train_labels, OH_train_labels), (test, test_labels, OH_test_labels) = load_MNIST()
-(train, train_labels, OH_train_labels), (test, test_labels, OH_test_labels) = load_hyp_spectral(without = [16])
+(train, train_labels, OH_train_labels), (test, test_labels, OH_test_labels) = load_hyp_spectral_splitted(without = [])
 
 #print(train.shape, train_labels.shape, test.shape, test_labels.shape)
 
 # number of neurons in each layer
 input_num_units = 220
-hidden_num_units = 500
+hidden_num_units = 1000
 output_num_units = 16
 
 # set remaining variables
 epochs = 100
 batch_size = 128
-learning_rate = 0.0001
+learning_rate = 0.00001
 
 
 # define model
-rel_model = RelationNetwork(20, hidden_num_units, output_num_units)
+rel_model = RelationNetwork(30, hidden_num_units, output_num_units)
 att_model = AttributeNetwork(input_num_units, hidden_num_units, 10)
 loss_fn = torch.nn.MSELoss()
 
 # define optimization algorithm
-rel_optimizer = torch.optim.Adam(rel_model.parameters(), lr=learning_rate)
-att_optimizer = torch.optim.Adam(att_model.parameters(), lr=learning_rate)
+rel_optimizer = torch.optim.Adam(rel_model.parameters(), lr=learning_rate,weight_decay=1e-5)
+att_optimizer = torch.optim.Adam(att_model.parameters(), lr=learning_rate,weight_decay=1e-5)
 
 for epoch in range(epochs):
     #print(torch.from_numpy(train.astype(float)).float())
