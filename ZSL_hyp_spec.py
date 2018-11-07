@@ -17,7 +17,7 @@ import numpy as np
 from torch.autograd import Variable
 from sklearn.metrics import accuracy_score
 from ZSL_models import RelationNetwork, AttributeNetwork
-from load_data import load_hyp_spectral
+from load_data import load_hyp_spectral_splitted
 
 
 
@@ -31,13 +31,16 @@ attributes = np.zeros(shape=(16, 10))
 
 # use simple features:
 attributes = {}
-with open("hyp_simple_features.txt", 'r') as f:
+with open("abstract_features_idea1.txt", 'r') as f:
+#with open("hyp_simple_features.txt", 'r') as f:
+    
     data = f.readlines()
     for line in data:
         label, features = line.split(":")
         values = [float(v) for v in features.replace("\n", "").split(",")]
-        attributes[int(label)] = values
-#print(attributes)
+        #print(values)
+        attributes[int(label)] = values[0:500]
+#print(len(attributes[0])) # <--53760 for abstract features, 20 for simple features
 
 #(train, train_labels, OH_train_labels), (test, test_labels, OH_test_labels) = load_MNIST()
 (train, train_labels, OH_train_labels), (test, test_labels, OH_test_labels) = load_hyp_spectral_splitted(without = [])
@@ -50,14 +53,14 @@ hidden_num_units = 1000
 output_num_units = 16
 
 # set remaining variables
-epochs = 100
+epochs = 500
 batch_size = 128
-learning_rate = 0.00001
+learning_rate = 0.000001
 
 
 # define model
-rel_model = RelationNetwork(30, hidden_num_units, output_num_units)
-att_model = AttributeNetwork(input_num_units, hidden_num_units, 10)
+rel_model = RelationNetwork(1000, hidden_num_units, output_num_units)
+att_model = AttributeNetwork(input_num_units, hidden_num_units, 500)
 loss_fn = torch.nn.MSELoss()
 
 # define optimization algorithm
