@@ -21,3 +21,8 @@ print(avg_material[0:2,0:10])
 plt.figure(figsize=(40,5))
 ax = sns.heatmap(avg_material, linewidth=1)
 #plt.show()
+
+# show data distribution:
+data_size = np.sum([len(data[x]) for x in data])
+for key in data:
+    print(key, len(data[key])/data_size)

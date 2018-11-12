@@ -5,6 +5,7 @@ Created on Fri Oct 12 09:03:43 2018
 @author: Christopher
 """
 import torch.nn as nn
+import torch
 import torch.nn.functional as F
 
 class AttributeNetwork(nn.Module):
@@ -31,6 +32,6 @@ class RelationNetwork(nn.Module):
     def forward(self,x):
 
         x = F.relu(self.fc1(x))
-        x = F.sigmoid(self.fc2(x))
+        x = torch.sigmoid(self.fc2(x))
         return x
     
