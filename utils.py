@@ -909,8 +909,9 @@ def load_data(root_dir='./',dataset_name='FTIR',scale_dataset=False,shuffle=-1,b
     if not os.path.isfile(dataset+'.scaler') and saved_scaler:
         print('Warning! Impossible to retrieve the scaling used! Results might be not those expected!')
         saved_scaler=False
+    ######
     train_set, test_set, _, mapping, scaler =fromMAT(path=dataset,varname=varname,seed=shuffle,scale_dataset=(scale_dataset and not saved_scaler),excluded_class=excluded_class,balance=balance,window=window,augmentation_type=augmentation_type)
-
+    ######
     X_train, y_train = train_set
     y_train_min=np.amin(y_train)
     if y_train.size:

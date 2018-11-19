@@ -84,10 +84,10 @@ def extract_abstract_features():
 #    vgg16_feature = model.predict(img_data)
     
     # Idea 1:
-    if True:
+    if False:
         print("Idea 1")
         with open("abstract_features_idea1.txt", 'w') as f:
-            for c in range(17):
+            for c in range(1,17):
                 img = data[str(c)]
                 # fill every bandwidth with 4 zeros to get a width of at leatst 224:
                 img = [list(row) + [0]*4 for row in img]
@@ -110,10 +110,10 @@ def extract_abstract_features():
                 f.write("\n")
     # Idea 2: this might be better, since Idea 1 maybe gave convolutional 
     # information between the sample, which is not there
-    if True:
+    if False:
         print("Idea 2")
         with open("abstract_features_idea2.txt", 'w') as f:
-            for c in range(17):
+            for c in range(1,17):
                 img = data[str(c)]
                 img = np.average(img, 0)
                 # fill every bandwidth with 4 zeros to get a width of at leatst 224:
@@ -132,10 +132,10 @@ def extract_abstract_features():
                     f.write("," + str(value))
                 f.write("\n")
     # Idea 3: this is just a random idea, maybe some kind of de-composition is involved
-    if True:
+    if False:
         print("Idea 3")
         with open("abstract_features_idea3.txt", 'w') as f:
-            for c in range(17):
+            for c in range(1,17):
                 img = data[str(c)]
                 img = np.average(img, 0)
                 # fill every bandwidth with 4 zeros to get a width of at leatst 224:
@@ -162,6 +162,51 @@ def extract_abstract_features():
                 f.write("\n")
     
 
+def select_attributes(file):
+    # load attribute data:
+    # lets start with random attributes CxA, C is number of classes, A is number of attributes:
+    # attributes = np.random.rand(16, 10)
+    # or assume no attribues:
+    attributes = np.zeros(shape=(16, 10))
+    #import matplotlib.pyplot as plt
+    #plt.imshow(digits['images'][104])
+    #print(digits['target'][104])
+    
+    # load the attributes from the file
+    attributes = {}
+    with open(file, 'r') as f:
+    #with open("hyp_simple_features.txt", 'r') as f:
+        
+        data = f.readlines()
+        for line in data:
+            label, features = line.split(":")
+            values = [float(v) for v in features.replace("\n", "").split(",")]
+            #print(values)
+            attributes[int(label)] = values
+    #print(len(attributes[0])) # <--53760 for abstract features, 20 for simple features
+    sel_attributes = {}
+    # Now remove all features that are 0 everywhere, bc they do nothing
+    zero_features = list(range(53760))
+    for key in attributes:
+        print(key)
+        for i, val in enumerate(attributes[key]):
+            if val != 0:
+                #print("keep", i)
+                if i in zero_features:
+                    zero_features.remove(i)
+    print(len(zero_features))
+    sel_attributes = {}
+    for key in attributes:
+        print(key)
+        # turns out, the feature vectors are not the same length, so we take the minimum of 43008 or just the first 1000.
+        sel_attributes[key] = [attributes[key][i] for i in range(1000) if i not in zero_features]
+    # save the feature matrix, bc it runs forever:
+    save_obj(sel_attributes, file.split(".")[0] + "_selected")
+    # with this selection, we remove 43448 irrelevant features.
 
 
-extract_abstract_features()    
+
+
+select_attributes('abstract_features_idea3.txt')
+
+#extract_abstract_features()    

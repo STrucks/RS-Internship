@@ -7,7 +7,17 @@ Created on Mon Oct 15 10:03:13 2018
 
 from sklearn.datasets import load_digits
 import numpy as np
+import pickle
 
+def save_obj(obj, name ):
+    with open('obj/'+ name + '.pkl', 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
+def load_obj(name ):
+    with open('obj/' + name + '.pkl', 'rb') as f:
+        return pickle.load(f)
+    
+    
 def flatten(_list):
     if len(_list) == 1:
         return _list[0]
@@ -19,7 +29,7 @@ def one_hot(labels, nr_classes):
     _labels = []
     for l in labels:
         _labels.append([0] * nr_classes)
-        _labels[-1][l] = 1
+        _labels[-1][l-1] = 1
     return np.asarray(_labels)
 
 
@@ -71,12 +81,13 @@ def split_train_test(data, classes=[1,2,3,4,5,6,7,11]):
     test = []
     label_test = []
     for c in classes:
+        if c == 0: continue
         all_instances = data[str(c)]
         left, right = all_instances[0:int(len(all_instances) * 0.8)], all_instances[int(len(all_instances) * 0.8):]
         train.append(left)
-        label_train.append([int(c)-1] * len(left)) # since the labels start at on, subtract 1
+        label_train.append([int(c)] * len(left)) # since the labels start at on, subtract 1
         test.append(right)
-        label_test.append([int(c)-1] * len(right))
+        label_test.append([int(c)] * len(right))
         
     others = [str(x) for x in range(1,17) if x not in classes]
     for o in others:
@@ -109,6 +120,7 @@ def load_hyp_spectral_splitted(without = [15, 16]):
     
     for row in range(len(GT)):
         for col in range(len(GT[row,:])):
+            if GT[row,col] == 0: continue
             if str(GT[row,col]) in data:
                 data[str(GT[row,col])].append(raw_data[row, col, :])
             else:
@@ -133,6 +145,8 @@ def load_hyp_spectral():
     
     for row in range(len(GT)):
         for col in range(len(GT[row,:])):
+            if GT[row,col] == 0:
+                continue
             if str(GT[row,col]) in data:
                 data[str(GT[row,col])].append(raw_data[row, col, :])
             else:
@@ -140,8 +154,11 @@ def load_hyp_spectral():
                 data[str(GT[row, col])].append(raw_data[row, col, :])
     return data
 
+    
 
 
+def load_attributes(file):
+    return load_obj(file)
 
 
 
