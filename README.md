@@ -38,27 +38,26 @@ This set up was tested with varying numbers of left out classes (zero shot class
 
 I have the impression that the optimizer gets stuck in a local optima, mostly with an accuracy of ~6%, ~0.4% (baseline).
 It is striking that the model archives the same result most of the time. My guess is that the optimizer gets stuck in a local optimum that is extremely bad (propably predicting only one class). There are some occasions where the accuracy on the test set is high (upto 40%!!). In these cases, the optimizer finds a better solution and performs reasonable. Thats why I conducted the experiments over fifteen trials and only reported the average accuracy.
-The accuracy for one individual trial was often either 0.004697040864255519 or 0.13433536871770785. This might be the baseline of one class, because we have an unbalanced dataset. However, these baselines do not match any baselines (except maybe class 16), see tabel below
+The accuracy for one individual trial was often either 0.004697040864255519 or 0.13433536871770785. This might be the baseline of one class, because we have an unbalanced dataset. Probably the baseline of class 2 and class 1. However, I dont know why the classifier would choose class 2 as the best class to guess for.
 
 | \            | % of whole dataset |
 |:-----------: |:------------------:|
-|      0       | 0.5125326991676575 |
-|      1       | 0.0021878715814506538 |
-|      2       | 0.0679191438763377  |
-|      3       | 0.03947681331747919 |
-|      4       | 0.01127229488703924|
-|      5       | 0.02297265160523187|
-|      6       | 0.034720570749108205|
-|      7       | 0.0013317479191438763|
-|      8       | 0.022734839476813318|
-|      9       | 0.0009512485136741974|
-|     10       | 0.04623067776456599|
-|     11       | 0.11676575505350772|
-|     12       | 0.028204518430439952|
-|     13       | 0.009750297265160524|
-|     14       | 0.06016646848989298|
-|     15       | 0.01835909631391201|
-|     16       | 0.004423305588585018|
+|      1       | 0.00448824275539077 |
+|      2       | 0.13933066640647868  |
+|      3       | 0.08098351058639867 |
+|      4       | 0.023124207239730705|
+|      5       | 0.047126548931603084|
+|      6       | 0.07122646111815786|
+|      7       | 0.002731973851107425|
+|      8       | 0.04663869645819104|
+|      9       | 0.0019514098936481608|
+|     10       | 0.09483852083130062|
+|     11       | 0.23953556444531174|
+|     12       | 0.057859303346667966|
+|     13       | 0.020001951409893647|
+|     14       | 0.12342667577324618|
+|     15       | 0.03766221094740951|
+|     16       | 0.009074056005463947|
 
 
 
