@@ -21,10 +21,10 @@ The accuracy drops because of a) the nature of the ZSL problem and b) because th
 ### More results:
 After implementing feature extraction with various methods (see code), I came to more results:
 
-* learning rate = 0.000001
-* size of the hidden layer of attribute network = 1000
-* size of the hidden layer of relation network = 1000
-* epochs = 500
+* learning rate = 0.0001
+* size of the hidden layer of attribute network = 100
+* size of the hidden layer of relation network = 100
+* epochs = 20
 
 This set up was tested with varying numbers of left out classes (zero shot classes). See table:
 
