@@ -32,6 +32,7 @@ class RelationNetwork(nn.Module):
     def forward(self,x):
 
         x = F.relu(self.fc1(x))
-        x = torch.sigmoid(self.fc2(x))
+        #x = torch.sigmoid(self.fc2(x))
+        x = F.softmax(self.fc2(x), dim=1)
         return x
     

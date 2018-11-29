@@ -30,13 +30,32 @@ def show_data_distr():
         print(key, len(data[key])/data_size)
         
 def show_attribute_matrix():
+    import seaborn as sns
+    
+    plt.figure(figsize=(30,20))
+    plt.subplot(3,1,1)
+    plt.title("idea 1")
     file = "abstract_features_idea1_selected"
     att = load_attributes(file)
-    import seaborn as sns
-    #plt.imshow(avg_material, cmap='hot', interpolation='nearest', linew)
     att_matrix = np.asarray([att[i][0:50] for i in range(1,17)])
     print(att_matrix.shape)
-    plt.figure(figsize=(20,5))
-    ax = sns.heatmap(att_matrix, linewidth=1)
+    ax1 = sns.heatmap(att_matrix, linewidth=1)
+    
+    plt.subplot(3,1,2)
+    plt.title("idea 2")
+    file = "abstract_features_idea2_selected"
+    att = load_attributes(file)
+    att_matrix = np.asarray([att[i][0:50] for i in range(1,17)])
+    ax2 = sns.heatmap(att_matrix, linewidth=1)
+    
+    plt.subplot(3,1,3)
+    plt.title("idea 3")
+    file = "abstract_features_idea3_selected"
+    att = load_attributes(file)
+    att_matrix = np.asarray([att[i][0:50] for i in range(1,17)])
+    ax3 = sns.heatmap(att_matrix, linewidth=1)
+    
+    
+    
     
 show_attribute_matrix()

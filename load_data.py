@@ -55,13 +55,13 @@ def load_MNIST_ZSL(without=[9]):
     train, test = data[0:int(0.8*len(data))], data[int(0.8*len(data)):]
     train_labels , test_labels = labels[0:int(0.8*len(labels))], list(labels[int(0.8*len(labels)):])
     OH_train_labels, OH_test_labels = list(one_hot(np.asarray(labels[0:int(0.8*len(labels))]), 10)), list(one_hot(np.asarray(labels[int(0.8*len(labels)):]), 10))
-    
-    remove = np.where(train_labels == without[0])[0]
-    remove = list(reversed(remove))
-    for i in remove:
-        test.append(train[i])
-        test_labels.append(train_labels[i])
-        OH_test_labels.append(OH_train_labels[i])
+    if len(without) > 0:
+        remove = np.where(train_labels == without[0])[0]
+        remove = list(reversed(remove))
+        for i in remove:
+            test.append(train[i])
+            test_labels.append(train_labels[i])
+            OH_test_labels.append(OH_train_labels[i])
     return (np.asarray(train), np.asarray(train_labels), np.asarray(OH_train_labels)), (np.asarray(test), np.asarray(test_labels), np.asarray(OH_test_labels))
 
 
@@ -157,8 +157,12 @@ def load_hyp_spectral():
     
 
 
-def load_attributes(file):
-    return load_obj(file)
+def load_attributes(file, length = 0):
+    data = load_obj(file)
+    if length > 0:
+        for key in data:
+            data[key] = data[key][0:length]
+    return data
 
 
 

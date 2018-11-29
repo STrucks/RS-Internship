@@ -31,9 +31,10 @@ This set up was tested with varying numbers of left out classes (zero shot class
 
 | \            | simple features | abst features 1 | abst features 2 | abst features 3 |
 |:-----------: |:---------------:|:---------------:|:---------------:|:---------------:|
-| all classes  |               	 |       7%     	 |      4%      	 |       6%      	 |
-| no [16]      |               	 |       7%      	 |      3%       	 |       5%      	 |
-| no [15,16]   |               	 |       6%      	 |      5%       	 |       4%      	 |
+| all classes  |               	 |       80%, 0.10     	 |      16%, 0.08      	 |       13%, 0.08   	 |
+| no [16]      |               	 |       84%, 0.09     	 |      3%       	 |       5%      	 |
+| no [15,16]   |               	 |       80%, 0.12     	 |      5%       	 |       4%      	 |
+| no [11-16]   |               	 |       50%, 0.15     	 |      5%       	 |       4%      	 |
 
 
 I have the impression that the optimizer gets stuck in a local optima, mostly with an accuracy of ~6%, ~0.4% (baseline).

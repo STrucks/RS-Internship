@@ -16,3 +16,8 @@ def confusion_matrix(y, t, size = 16):
     for ys, ts in zip(y,t):
         matrix[ys-1,ts-1] += 1
     print(matrix)
+    
+def batch(iterable, n=1):
+    l = len(iterable)
+    for ndx in range(0, l, n):
+        yield iterable[ndx:min(ndx + n, l)]
