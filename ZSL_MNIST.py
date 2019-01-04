@@ -17,6 +17,8 @@ from utils2 import confusion_matrix, batch
 # atributes CxA matrix with attributes: (1) has corners, (2) has vertical lines, (3) has horizontal lines, (4) has circle, (5) has curves
 attributes = [[0,0.5,0.5,1,1],[1,1,0,0,0],[1,0,1,0,1],[0,0.5,0.8,0,1],[1,1,1,0,0],[1,1,1,0,1],[0,0.5,0.5,1,1],[1,0.8,1,0,0],[0,0.5,0.5,1,1], [0,0.5,0,1,1]]
 attributes = np.asarray([np.asarray(row) for row in attributes])
+attributes = np.reshape(attributes, newshape=(1,-1))
+print(attributes.shape)
 #attributes = np.zeros(shape=(10,5))
 #import matplotlib.pyplot as plt
 #plt.imshow(digits['images'][104])
@@ -24,7 +26,7 @@ attributes = np.asarray([np.asarray(row) for row in attributes])
 
 
 #(train, train_labels, OH_train_labels), (test, test_labels, OH_test_labels) = load_MNIST()
-(train, train_labels, OH_train_labels), (test, test_labels, OH_test_labels) = load_MNIST_ZSL(without = [9,8,7,6])
+(train, train_labels, OH_train_labels), (test, test_labels, OH_test_labels) = load_MNIST_ZSL(without = [5,6,7,8,9])
 
 
 # number of neurons in each layer
@@ -33,14 +35,14 @@ hidden_num_units = 100
 output_num_units = 10
 
 # set remaining variables
-epochs = 100
+epochs = 30
 batch_size = 128
 learning_rate = 0.0001
 nr_batches = 479
 
 # define model
-rel_model = RelationNetwork(10, hidden_num_units, output_num_units)
-att_model = AttributeNetwork(input_num_units, hidden_num_units, 5)
+rel_model = RelationNetwork(100, hidden_num_units, output_num_units)
+att_model = AttributeNetwork(input_num_units, hidden_num_units, 50)
 loss_fn = torch.nn.MSELoss()
 
 # define optimization algorithm
@@ -56,10 +58,9 @@ for epoch in range(epochs):
         # pass that batch trough attribute network
         pred = att_model(x)
         # concat each row with its respective attributes from 'attributes'
-        att_matrix = np.asarray([attributes[j] for j in label_batch[i]])
+        att_matrix = np.asarray([attributes for j in label_batch[i]]).reshape(len(train_batch[i]), 50)
         att_matrix = Variable(torch.from_numpy(att_matrix).float())
         combined = torch.cat((pred, att_matrix), 1)
-        
         pred = rel_model(combined)
         # get loss
         loss = loss_fn(pred, y)
@@ -71,7 +72,7 @@ for epoch in range(epochs):
         att_optimizer.step()
         rel_optimizer.step()
         
-        
+    print(epoch, loss.data)
         
     if epoch%100 == 0:
         print(epoch, "loss", loss.data)
@@ -80,7 +81,7 @@ for epoch in range(epochs):
         
         x, y = Variable(torch.from_numpy(train).float()), Variable(torch.from_numpy(OH_train_labels).float(), requires_grad=False)
         pred = att_model(x)
-        att_matrix = np.asarray([attributes[i] for i in train_labels])
+        att_matrix = np.asarray([attributes for j in train_labels]).reshape(len(train), 50)
         att_matrix = Variable(torch.from_numpy(att_matrix).float())
         combined = torch.cat((pred, att_matrix), 1)
 
@@ -96,7 +97,7 @@ for epoch in range(epochs):
 
 x, y = Variable(torch.from_numpy(test).float()), Variable(torch.from_numpy(OH_test_labels).float(), requires_grad=False)
 pred = att_model(x)
-att_matrix = np.asarray([attributes[i] for i in test_labels])
+att_matrix = np.asarray([attributes for j in test_labels]).reshape(len(test), 50)
 att_matrix = Variable(torch.from_numpy(att_matrix).float())
 combined = torch.cat((pred, att_matrix), 1)
 

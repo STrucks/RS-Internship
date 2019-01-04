@@ -7,6 +7,7 @@ Created on Tue Oct 30 09:32:12 2018
 
 import numpy as np
 from load_data import load_hyp_spectral
+import torch
 
 def extract_simple_features():
     """
@@ -207,6 +208,6 @@ def select_attributes(file):
 
 
 
-select_attributes('abstract_features_idea3.txt')
+#select_attributes('abstract_features_idea3.txt')
 
 #extract_abstract_features()    

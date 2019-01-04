@@ -8,7 +8,8 @@ Created on Mon Oct 15 10:03:13 2018
 from sklearn.datasets import load_digits
 import numpy as np
 import pickle
-
+from utils import fromMAT
+    
 def save_obj(obj, name ):
     with open('obj/'+ name + '.pkl', 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
@@ -28,10 +29,20 @@ def flatten(_list):
 def one_hot(labels, nr_classes):
     _labels = []
     for l in labels:
-        _labels.append([0] * nr_classes)
-        _labels[-1][l-1] = 1
+        #print(l)
+        #print(int(l))
+        _labels.append(np.zeros(shape=(nr_classes)))
+        _labels[-int(1)][int(l)-1] = 1
     return np.asarray(_labels)
 
+
+def load_MNIST_raw():
+    digits = load_digits()
+    data = [np.reshape(img,newshape=(1,8*8)) for img in digits['images']]
+    data = [d[0] for d in data]
+    labels = digits['target']
+    return data, labels
+    
 
 def load_MNIST():
     digits = load_digits()
@@ -110,7 +121,7 @@ def split_train_test(data, classes=[1,2,3,4,5,6,7,11]):
 def load_hyp_spectral_splitted(without = [15, 16]):
     from scipy.io import loadmat
     
-    f = loadmat("data/indian_pines.mat")
+    f = loadmat("data/indian_pines_mh.mat")
     raw_data = f['indian_pines']
     
     f = loadmat("data/indian_pines_gt.mat")
@@ -154,7 +165,31 @@ def load_hyp_spectral():
                 data[str(GT[row, col])].append(raw_data[row, col, :])
     return data
 
+def load_hyp_spectral_preprocessed():
+    train_set, _, _, _, _ =  fromMAT(path="data/indian_pines", varname="indian_pines", perc_split=[100,0,0],
+                                                       scale_dataset = True, excluded_class = [], augmentation_type = 'l')
+    X, Y = train_set
+    data = {}
     
+    for x, y in zip(X,Y):
+        y = int(y)
+        if y in data:
+            data[y].append(x)
+        else:
+            data[y] = list([x])
+    #print(data)
+               
+    
+#    for row in range(len(GT)):
+#        for col in range(len(GT[row,:])):
+#            if GT[row,col] == 0:
+#                continue
+#            if str(GT[row,col]) in data:
+#                data[str(GT[row,col])].append(raw_data[row, col, :])
+#            else:
+#                data[str(GT[row, col])] = []
+#                data[str(GT[row, col])].append(raw_data[row, col, :])
+    return data
 
 
 def load_attributes(file, length = 0):
@@ -165,15 +200,27 @@ def load_attributes(file, length = 0):
     return data
 
 
+def preprocess(exclude = [0]):
+    train_set, _, test_set, mapping, scaler  = fromMAT(path="data/indian_pines", varname="indian_pines", perc_split=[80,0,20],
+                                                       scale_dataset = True, excluded_class = exclude, augmentation_type = 'l')
+    """
+    Questions: 
+    why is the size not changing after label augmentation?
+    excluded class removes the classes from BOTH training and testing phase?
+    """
+    
+    OH_train = one_hot(train_set[1], 16)
+    OH_test = one_hot(test_set[1], 16)
+    
+    return (train_set[0], train_set[1], OH_train), (test_set[0], test_set[1], OH_test)
+
+
+def load_hyp_spectral_splitted_preprocessed(without = [15, 16]):
+    return preprocess(without)
 
 
 
-
-
-
-
-
-
+#load_hyp_spectral_preprocessed()
 
 
 

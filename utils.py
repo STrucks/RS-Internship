@@ -23,13 +23,13 @@ from sklearn.cross_validation import StratifiedShuffleSplit
 from collections import Counter
 from itertools import combinations
 from random import shuffle, randint
-from lasagne.regularization import regularize_layer_params, l2, l1
-from nolearn.lasagne import visualize
-import lasagne
-from lasagne.objectives import aggregate
-from lasagne.layers import get_output, get_output_shape, get_all_layers, get_all_param_values,get_all_params
-from lasagne.init import Initializer
-from lasagne import layers
+#from lasagne.regularization import regularize_layer_params, l2, l1
+#from nolearn.lasagne import visualize
+#import lasagne
+#from lasagne.objectives import aggregate
+#from lasagne.layers import get_output, get_output_shape, get_all_layers, get_all_param_values,get_all_params
+#from lasagne.init import Initializer
+#from lasagne import layers
 import numpy as np
 from scipy.special import binom
 from scipy.ndimage.filters import gaussian_filter1d
@@ -83,14 +83,8 @@ def l2_paired(x):
   return T.sum((x - T.dot(rolled,mask))**2)
 
 
-def my_objective(layers,
-                 loss_function,
-                 target,
-                 lamda1,
-                 lamda2,
-                 aggregate=aggregate,
-                 deterministic=False,
-                 get_output_kw=None):
+def my_objective(layers, loss_function, target, lamda1, lamda2, aggregate = True, # changed aggregate = aggregate to aggregate = True
+                 deterministic=False, get_output_kw=None):
     """Custom objective function for Nolearn that include 2 different
     type of regularization terms
     Parameters
@@ -261,7 +255,7 @@ def fromMAT(path="dataset.mat",varname="data",perc_split=[],seed=-1,scale_datase
     scale_dataset : boolean
         whether to normalize or not the dataset between 0 and 1
     augmentation_type : str
-        which data augmentation to do (a,l,al: a=noise, l=label based data augmentation)
+        which data augmentation to do (a, n l,al: a=noise, l=label based data augmentation)
     Returns
     -------
     (data_train,label_train) : pair of array_like elements
@@ -475,7 +469,7 @@ def fromMAT(path="dataset.mat",varname="data",perc_split=[],seed=-1,scale_datase
         label_valid=data_gt[validation_min:validation_max]
         
         data_test=data[test_min:test_max]
-        label_test=data[test_min:test_max]
+        label_test=data_gt[test_min:test_max] # there was a bug: label_test=data[test_min:test_max] changed to label_test=data_gt[test_min:test_max]
     elif perc_split[2]==0:
         data_train=data[train_min:train_max]
         label_train=data_gt[train_min:train_max]
