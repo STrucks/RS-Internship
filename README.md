@@ -74,16 +74,16 @@ One should mention that the accuracy scores are not cross validated.
 ## Data Preprocessing:
 Data normalization works, data augmentation however does not work (see distributions below).
 
-![exploration images](data distr.png)
+![Data Distribution](https://github.com/STrucks/RS-Internship/blob/master/exploration%20imgs/data%20distr.png)
 
 ## Reducing the Autoencoder Network:
 That does not make it better or worse. The features are slightly different after 50 epochs of training. That is however an improvement towards the features with a deeper neural network, which were exactly the same for every class. A heatmap of the features can be seen below. 
 
-![Heatmap](exploration images/autoencoder features.png)
+![Heatmap](https://github.com/STrucks/RS-Internship/blob/master/exploration%20imgs/autoencoder%20features.png)
 
 You can see the loss after every epoch drop and converge:
 
-![Loss](exploration images/loss for autoencoder.png)
+![Loss](https://github.com/STrucks/RS-Internship/blob/master/exploration%20imgs/loss%20for%20autoencoder.png)
 
 The performance of the ZSL classifier however stays the same (~ 24% accuracy). It still always returns the label of the most probable class. 
 
