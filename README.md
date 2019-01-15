@@ -74,7 +74,7 @@ One should mention that the accuracy scores are not cross validated.
 ## Data Preprocessing:
 Data normalization works, data augmentation however does not work (see distributions below).
 
-![Data Distribution](exploration images/data distr.png)
+![exploration images](data distr.png)
 
 ## Reducing the Autoencoder Network:
 That does not make it better or worse. The features are slightly different after 50 epochs of training. That is however an improvement towards the features with a deeper neural network, which were exactly the same for every class. A heatmap of the features can be seen below. 
