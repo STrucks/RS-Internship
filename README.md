@@ -68,3 +68,44 @@ Maybe change optimizer? other than Adam
 
 One should mention that the accuracy scores are not cross validated.
 
+
+---------------------------------------------------
+
+## Data Preprocessing:
+Data normalization works, data augmentation however does not work (see distributions below).
+
+//image
+
+## Reducing the Autoencoder Network:
+That does not make it better or worse. The features are slightly different after 50 epochs of training. That is however an improvement towards the features with a deeper neural network, which were exactly the same for every class. A heatmap of the features can be seen below. 
+
+// image
+
+You can see the loss after every epoch drop and converge:
+
+//image
+
+The performance of the ZSL classifier however stays the same (~ 24% accuracy). It still always returns the label of the most probable class. 
+
+Confusion matrix: 
+
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+[  0. 270.   0.  88. 207.   0.   0.   0. 105. 270.   0. 205. 904.   0.    0.   0.]
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]]
+
+The loss in the end of the training phase is 0.0753, the accuracy on the training set is about 27%.
+
+Also, it seems like the load_data function from utils does not remove the 0 class.
