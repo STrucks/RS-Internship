@@ -9,10 +9,12 @@ import torch
 from torch import nn
 from torch.autograd import Variable
 from load_data import load_hyp_spectral, load_hyp_spectral_preprocessed, load_MNIST_raw
+from matplotlib import pyplot as plt
 import torch.nn.functional as F
 import pickle 
+from utils2 import heatmap
 
-num_epochs = 5
+num_epochs = 10
 batch_size = 128
 learning_rate = 1e-3
 data_size = 220
@@ -21,22 +23,24 @@ class autoencoder(nn.Module):
     def __init__(self):
         super(autoencoder, self).__init__()
         self.encoder = nn.Sequential(
-            nn.Linear(data_size, 128),
-            nn.ReLU(True),
-            nn.Linear(128, 64),
-            nn.ReLU(True),
-            nn.Linear(64, 32), 
-            nn.ReLU(True), 
-            nn.Linear(32, 10))
+            nn.Linear(data_size, 10),
+            #nn.ReLU(True)
+            #nn.Linear(128, 64),
+            #nn.ReLU(True),
+            #nn.Linear(64, 32), 
+            #nn.ReLU(True), 
+            #nn.Linear(32, 10)
+            )
         self.decoder = nn.Sequential(
-            nn.Linear(10, 32),
-            nn.ReLU(True),
-            nn.Linear(32, 64),
-            nn.ReLU(True),
-            nn.Linear(64, 128),
-            nn.ReLU(True), 
-            nn.Linear(128, data_size),
-            nn.Tanh())
+            nn.Linear(10, data_size),
+            #nn.ReLU(True),
+            #nn.Linear(32, 64),
+            #nn.ReLU(True),
+            #nn.Linear(64, 128),
+            #nn.ReLU(True), 
+            #nn.Linear(128, data_size),
+            #nn.Tanh()
+            )
 
     def forward(self, x):
         x = self.encoder(x)
@@ -92,6 +96,7 @@ raw_data = np.asarray(f['indian_pines'])
 raw_data = np.reshape(raw_data, newshape=(145*145,220))
 print(raw_data.shape)
 
+
 def train():
     data = load_hyp_spectral_preprocessed()
     #data = load_MNIST_raw()
@@ -99,9 +104,43 @@ def train():
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-5)
     print("start")
+    losses = []
     for epoch in range(num_epochs):
+        epoch_loss = []
         for key in data:
             batch = data[key]
+            for sample in batch:
+                img = Variable(torch.from_numpy(sample.astype(float)).float())
+                # ===================forward=====================
+                output = model(img)
+                loss = criterion(output, img)
+                # ===================backward====================
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+                epoch_loss.append(loss.data)
+        # ===================log========================
+        print('epoch [{}/{}], loss:{:.4f}'
+              .format(epoch + 1, num_epochs, loss.data))
+        losses.append(np.average(epoch_loss))
+    plt.plot(losses)
+    #torch.save(model.state_dict(), './sim_autoencoder.pth')
+    
+    return model
+
+
+def train_MNIST():
+    data = load_hyp_spectral_preprocessed()
+    #data, _ = load_MNIST_raw()
+    batch_size = 3 # 3 for mnist
+    data_batches = np.split(np.asarray(data), batch_size)
+    model = autoencoder()
+    criterion = nn.MSELoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-5)
+    print("start")
+    for epoch in range(num_epochs):
+        for b in data_batches:
+            batch = b
             for sample in batch:
                 img = Variable(torch.from_numpy(sample.astype(float)).float())
                 # ===================forward=====================
@@ -161,9 +200,30 @@ def autoencoder_features(model):
         print(c, avg[0:5])
         avgs[c] = avg
     #print(avgs)
+    print([list(avgs[key]) for key in avgs])
+    heatmap([list(avgs[key]) for key in avgs])
     save_object(avgs, "obj/autoencoder_features_10_e50.pkl")
       
 
+def autoencoder_features_mnist(model):
+    data, labels = load_MNIST_raw()
+    avgs = {}
+    for c in range(10):
+        results = []
+        for index, l in enumerate(labels):
+            if l == c:
+                
+                
+                row = Variable(torch.from_numpy(data[index].astype(float)).float())
+                result = model.encode(row).data.numpy()
+                results.append(result)
+        avg = np.average(results, axis=0)
+        print(c, avg[0:5])
+        avgs[c] = avg
+    #print(avgs)
+    save_object(avgs, "obj/autoencoder_features_mnist_10_e50.pkl")
+    
+    
 def test(model):
     data = load_hyp_spectral()
     for c in data:
@@ -177,6 +237,8 @@ m = train()
 #test(m)
 
 autoencoder_features(m)
+
+#autoencoder_features_mnist(m)
 
 
 

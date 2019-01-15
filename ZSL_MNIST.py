@@ -10,7 +10,7 @@ import numpy as np
 from torch.autograd import Variable
 from sklearn.metrics import accuracy_score
 from ZSL_models import RelationNetwork, AttributeNetwork
-from load_data import load_MNIST_ZSL
+from load_data import load_MNIST_ZSL, load_attributes
 from utils2 import confusion_matrix, batch
 
 
@@ -18,7 +18,11 @@ from utils2 import confusion_matrix, batch
 attributes = [[0,0.5,0.5,1,1],[1,1,0,0,0],[1,0,1,0,1],[0,0.5,0.8,0,1],[1,1,1,0,0],[1,1,1,0,1],[0,0.5,0.5,1,1],[1,0.8,1,0,0],[0,0.5,0.5,1,1], [0,0.5,0,1,1]]
 attributes = np.asarray([np.asarray(row) for row in attributes])
 attributes = np.reshape(attributes, newshape=(1,-1))
-print(attributes.shape)
+att = load_attributes("autoencoder_features_mnist_10_e50")
+attributes = []
+for i in range(10):
+    attributes.append(att[i])
+print(attributes)
 #attributes = np.zeros(shape=(10,5))
 #import matplotlib.pyplot as plt
 #plt.imshow(digits['images'][104])
@@ -41,8 +45,8 @@ learning_rate = 0.0001
 nr_batches = 479
 
 # define model
-rel_model = RelationNetwork(100, hidden_num_units, output_num_units)
-att_model = AttributeNetwork(input_num_units, hidden_num_units, 50)
+rel_model = RelationNetwork(200, hidden_num_units, output_num_units)
+att_model = AttributeNetwork(input_num_units, hidden_num_units, 100)
 loss_fn = torch.nn.MSELoss()
 
 # define optimization algorithm
@@ -58,7 +62,7 @@ for epoch in range(epochs):
         # pass that batch trough attribute network
         pred = att_model(x)
         # concat each row with its respective attributes from 'attributes'
-        att_matrix = np.asarray([attributes for j in label_batch[i]]).reshape(len(train_batch[i]), 50)
+        att_matrix = np.asarray([attributes for j in label_batch[i]]).reshape(len(train_batch[i]), 100)
         att_matrix = Variable(torch.from_numpy(att_matrix).float())
         combined = torch.cat((pred, att_matrix), 1)
         pred = rel_model(combined)
@@ -81,7 +85,7 @@ for epoch in range(epochs):
         
         x, y = Variable(torch.from_numpy(train).float()), Variable(torch.from_numpy(OH_train_labels).float(), requires_grad=False)
         pred = att_model(x)
-        att_matrix = np.asarray([attributes for j in train_labels]).reshape(len(train), 50)
+        att_matrix = np.asarray([attributes for j in train_labels]).reshape(len(train), 100)
         att_matrix = Variable(torch.from_numpy(att_matrix).float())
         combined = torch.cat((pred, att_matrix), 1)
 
@@ -97,7 +101,7 @@ for epoch in range(epochs):
 
 x, y = Variable(torch.from_numpy(test).float()), Variable(torch.from_numpy(OH_test_labels).float(), requires_grad=False)
 pred = att_model(x)
-att_matrix = np.asarray([attributes for j in test_labels]).reshape(len(test), 50)
+att_matrix = np.asarray([attributes for j in test_labels]).reshape(len(test), 100)
 att_matrix = Variable(torch.from_numpy(att_matrix).float())
 combined = torch.cat((pred, att_matrix), 1)
 

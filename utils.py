@@ -461,7 +461,6 @@ def fromMAT(path="dataset.mat",varname="data",perc_split=[],seed=-1,scale_datase
         data_test=np.array([])
         label_test=np.array([])
 
-
     elif perc_split[1]==0:
         data_train=data[train_min:train_max+1]
         label_train=data_gt[train_min:train_max+1]
@@ -491,8 +490,8 @@ def fromMAT(path="dataset.mat",varname="data",perc_split=[],seed=-1,scale_datase
       if data_train.shape[0]>0:
         data_train=scaler.fit_transform(data_train)
       if data_valid.shape[0]>0:
-        
-        data_valid=scaler.transform(data_valid)
+        data_valid=scaler.fit_transform(data_valid) # change
+        #data_valid=scaler.transform(data_valid)
       if data_test.shape[0]>0:
         data_test=scaler.transform(data_test)
     else:
@@ -821,7 +820,7 @@ def noise_data_augmentation(data,data_gt,alphas=[0.5,0.5],beta=0.01,factor=2):
     return augmented_data   
 
 
-def load_data(root_dir='./',dataset_name='FTIR',scale_dataset=False,shuffle=-1,balance=0,excluded_class=None,window=1,return_scaler=False,saved_scaler=False):
+def load_data(root_dir='./',dataset_name='FTIR',scale_dataset=False,shuffle=-1,balance=0,excluded_class=None,window=1,return_scaler=False,saved_scaler=False, perc_split=[100,0,0]):
     """Function that handles the loading of the considered datasets
     Parameters
     ----------
@@ -862,14 +861,15 @@ def load_data(root_dir='./',dataset_name='FTIR',scale_dataset=False,shuffle=-1,b
             augmentation_type=''
     except:
         augmentation_type=''
-
+        
+    augmentation_type = 'label'
     if dataset_name=='PINE':
       if window=='0' or saved_scaler:
         window='gaussian11' 
  
-      excluded_class=[0,1,7,9,16] if excluded_class is None else excluded_class
+      excluded_class=[0] if excluded_class is None else excluded_class
       varname='indian_pines'
-      dataset=root_dir + 'datasets' + os.sep + 'pines' + os.sep + 'Indian_pines'
+      dataset=root_dir + 'data'+ os.sep + 'Indian_pines'
     elif dataset_name=='SALINA':
       if window=='0' or saved_scaler:
         window='gaussian13'
@@ -904,7 +904,7 @@ def load_data(root_dir='./',dataset_name='FTIR',scale_dataset=False,shuffle=-1,b
         print('Warning! Impossible to retrieve the scaling used! Results might be not those expected!')
         saved_scaler=False
     ######
-    train_set, test_set, _, mapping, scaler =fromMAT(path=dataset,varname=varname,seed=shuffle,scale_dataset=(scale_dataset and not saved_scaler),excluded_class=excluded_class,balance=balance,window=window,augmentation_type=augmentation_type)
+    train_set, test_set, _, mapping, scaler =fromMAT(path=dataset,varname=varname,perc_split=perc_split, seed=shuffle,scale_dataset=(scale_dataset and not saved_scaler),excluded_class=excluded_class,balance=balance,window=window,augmentation_type=augmentation_type)
     ######
     X_train, y_train = train_set
     y_train_min=np.amin(y_train)

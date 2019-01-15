@@ -5,7 +5,7 @@ Created on Mon Nov  5 09:28:50 2018
 @author: Christopher
 """
 
-from load_data import load_hyp_spectral, load_attributes
+from load_data import load_hyp_spectral, load_attributes, load_hyp_spectral_preprocessed
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -26,8 +26,26 @@ def plot_avg():
 def show_data_distr():
     # show data distribution:
     data_size = np.sum([len(data[x]) for x in data])
-    for key in data:
+    distr = {}
+    for key in sorted(data):
         print(key, len(data[key])/data_size)
+        distr[int(key)] = len(data[key])/data_size
+    distr = [distr[k] for k in list(sorted(distr))]
+    plt.subplot(2,1,1)
+    plt.bar(range(1,17), distr)
+    plt.title("data distribution before preprocessing")
+    data_p = load_hyp_spectral_preprocessed()
+    distr = {}
+    data_size = np.sum([len(data_p[x]) for x in data_p])
+    for key in data_p:
+        print("--",key, len(data_p[key])/data_size)
+        distr[int(key)] = len(data_p[key])/data_size
+    distr = [distr[k] for k in list(sorted(distr))]
+    plt.subplot(2,1,2)
+    plt.bar(range(1,17), distr)
+    plt.title("data distribution after preprocessing")
+    plt.show()
+
         
 def show_attribute_matrix():
     import seaborn as sns
@@ -62,7 +80,6 @@ def show_attribute_matrix():
     att_matrix = np.asarray([att[str(i)] for i in range(1,17)])
     ax4 = sns.heatmap(att_matrix, linewidth=1)
     
+       
     
-    
-    
-show_attribute_matrix()
+show_data_distr()

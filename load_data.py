@@ -8,7 +8,7 @@ Created on Mon Oct 15 10:03:13 2018
 from sklearn.datasets import load_digits
 import numpy as np
 import pickle
-from utils import fromMAT
+from utils import fromMAT, load_data
     
 def save_obj(obj, name ):
     with open('obj/'+ name + '.pkl', 'wb') as f:
@@ -165,10 +165,8 @@ def load_hyp_spectral():
                 data[str(GT[row, col])].append(raw_data[row, col, :])
     return data
 
-def load_hyp_spectral_preprocessed():
-    train_set, _, _, _, _ =  fromMAT(path="data/indian_pines", varname="indian_pines", perc_split=[100,0,0],
-                                                       scale_dataset = True, excluded_class = [], augmentation_type = 'l')
-    X, Y = train_set
+def load_hyp_spectral_preprocessed(perc_split = [100,0,0]):
+    X, Y, X_test, y_test, mapping = load_data(root_dir='./',dataset_name='PINE', scale_dataset=True, perc_split = perc_split)
     data = {}
     
     for x, y in zip(X,Y):
