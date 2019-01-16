@@ -87,6 +87,10 @@ You can see the loss after every epoch drop and converge:
 
 The performance of the ZSL classifier however stays the same (~ 24% accuracy). It still always returns the label of the most probable class. 
 
+Features of VAE:
+
+![VAE features](https://github.com/STrucks/RS-Internship/blob/master/exploration%20imgs/VAE_features.png)
+
 Confusion matrix: 
 
 [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
