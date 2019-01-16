@@ -14,7 +14,7 @@ import torch.nn.functional as F
 import pickle 
 from utils2 import heatmap
 
-num_epochs = 10
+num_epochs = 50
 batch_size = 128
 learning_rate = 1e-3
 data_size = 220
@@ -59,9 +59,9 @@ class VAE(nn.Module):
         super(VAE, self).__init__()
 
         self.fc1 = nn.Linear(220, 110)
-        self.fc21 = nn.Linear(110, 20)
-        self.fc22 = nn.Linear(110, 20)
-        self.fc3 = nn.Linear(20, 110)
+        self.fc21 = nn.Linear(110, 10)
+        self.fc22 = nn.Linear(110, 10)
+        self.fc3 = nn.Linear(10, 110)
         self.fc4 = nn.Linear(110, 220)
 
     def encode(self, x):
@@ -84,7 +84,6 @@ class VAE(nn.Module):
     def forward(self, x):
         mu, logvar = self.encode(x)
         z = self.reparametrize(mu, logvar)
-        print(z)
         return self.decode(z), mu, logvar
     
     
@@ -157,19 +156,36 @@ def train_MNIST():
     #torch.save(model.state_dict(), './sim_autoencoder.pth')
     return model
 
+reconstruction_function = nn.MSELoss()
+
+
+def loss_function(recon_x, x, mu, logvar):
+    """
+    recon_x: generating images
+    x: origin images
+    mu: latent mean
+    logvar: latent log variance
+    """
+    BCE = reconstruction_function(recon_x, x)  # mse loss
+    # loss = 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
+    KLD_element = mu.pow(2).add_(logvar.exp()).mul_(-1).add_(1).add_(logvar)
+    KLD = torch.sum(KLD_element).mul_(-0.5)
+    # KL divergence
+    return BCE + KLD
+
 
 def train_VAE():
     model = VAE()
-    criterion = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-5)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     
     for epoch in range(num_epochs):
         for data in raw_data:
+            data = np.asarray(data) # normalize the input, bc it would explode otherwise
+            data = (data - np.average(data)) / np.std(data)
             img = Variable(torch.from_numpy(data.astype(float)).float())
             # ===================forward=====================
-            output = model(img)
-            print(output)
-            loss = criterion(output, img)
+            recon, mu, logvar = model(img)
+            loss = loss_function(recon, img, mu, logvar)
             # ===================backward====================
             optimizer.zero_grad()
             loss.backward()
@@ -203,7 +219,26 @@ def autoencoder_features(model):
     print([list(avgs[key]) for key in avgs])
     heatmap([list(avgs[key]) for key in avgs])
     save_object(avgs, "obj/autoencoder_features_10_e50.pkl")
-      
+  
+
+def VAE_features(model):
+    data = load_hyp_spectral()
+    avgs = {}
+    for c in range(1,17):
+        c = str(c)
+        results = []
+        for row in data[c]:
+            row = Variable(torch.from_numpy(row.astype(float)).float())
+            result, _ = model.encode(row)
+            results.append(result.data.numpy())
+        avg = np.average(results, axis=0)
+        print(c, avg[0:5])
+        avgs[c] = avg
+    #print(avgs)
+    print([list(avgs[key]) for key in avgs])
+    heatmap([list(avgs[key]) for key in avgs])
+    save_object(avgs, "obj/VAE_features_10_e50.pkl")
+     
 
 def autoencoder_features_mnist(model):
     data, labels = load_MNIST_raw()
@@ -233,11 +268,11 @@ def test(model):
         print(model.encode(row))
         print(model(row))
     
-m = train()
+m = train_VAE()
 #test(m)
 
-autoencoder_features(m)
-
+#autoencoder_features(m)
+VAE_features(m)
 #autoencoder_features_mnist(m)
 
 
