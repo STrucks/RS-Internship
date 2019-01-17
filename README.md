@@ -128,3 +128,30 @@ Confusion matrix:
 The loss in the end of the training phase is 0.0753, the accuracy on the training set is about 27%.
 
 Also, it seems like the load_data function from utils does not remove the 0 class.
+
+------------------------------------------------------------------------------------
+### After balancing the data set:
+Data distribution:
+
+![Data Distribution](https://github.com/STrucks/RS-Internship/blob/master/exploration%20imgs/balanced_dataset.png)
+
+To make the data really balanced, we only take the classes with 100 or more samples.
+
+Lets see how well the autoencoder encodes and decodes:
+
+![original](https://github.com/STrucks/RS-Internship/blob/master/exploration%20imgs/original_example.png)
+
+![reconstruction](https://github.com/STrucks/RS-Internship/blob/master/exploration%20imgs/reconstruction_example.png)
+
+## Losses:
+The loss of the ZSL classifier does not decrease even after 50 epochs. 
+
+To see if the classifier actually works, I crafted a feature matrix by hand (Identity matrix). If we use that as feature matrix, the classifier actually learns:
+
+![loss](https://github.com/STrucks/RS-Internship/blob/master/exploration%20imgs/loss_with_perfect_features.png)
+
+We reach an accuracy of about 15% to 20%, which is better than chance (1/11). 
+Learning rate: 0.001, no weight decay, augmentation type = n.
+
+My conclusion is that the classifier should be able to learn the differences, but since the differences are extremely small, it needs to learn either much longer or use a better attribute matrix.
+
