@@ -7,6 +7,7 @@ Created on Thu Nov 15 10:05:31 2018
 
 import numpy as np
 from matplotlib import pyplot as plt
+import pickle 
 
 def confusion_matrix(y, t, size = 16):
     print("Confusion Matrix")
@@ -23,11 +24,17 @@ def batch(iterable, n=1):
         yield iterable[ndx:min(ndx + n, l)]
 
 
-def heatmap(matrix, title = "heatmap"):
+def save_object(obj, filename):
+    with open(filename, 'wb') as output:  # Overwrites any existing file.
+        pickle.dump(obj, output, pickle.HIGHEST_PROTOCOL)
+
+
+def heatmap(matrix, title = "heatmap", x_size = 1, y_size = 1):
     import seaborn as sns
     
-    plt.figure(figsize=(1*len(matrix),1*len(matrix[0])))
+    plt.figure(figsize=(x_size*len(matrix),y_size*len(matrix[0])))
     #plt.subplot(4,1,1)
     plt.title(title)
     ax1 = sns.heatmap(matrix, linewidth=1)
+    plt.show()
     

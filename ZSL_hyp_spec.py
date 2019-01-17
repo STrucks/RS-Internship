@@ -22,7 +22,8 @@ import numpy as np
 from torch.autograd import Variable
 from sklearn.metrics import accuracy_score
 from ZSL_models import RelationNetwork, AttributeNetwork
-from load_data import load_hyp_spectral_splitted, load_attributes, load_hyp_spectral_splitted_preprocessed, preprocess, one_hot
+from matplotlib import pyplot as plt
+from load_data import load_hyp_spectral_splitted, load_attributes, load_hyp_spectral_splitted_preprocessed, preprocess, one_hot, one_hot2
 from utils2 import confusion_matrix
 from utils import load_data
 #from utils import load_data
@@ -32,31 +33,32 @@ from utils import load_data
 #(train, train_labels, OH_train_labels), (test, test_labels, OH_test_labels) = load_MNIST()
 #(train, train_labels, OH_train_labels), (test, test_labels, OH_test_labels) = preprocess(exclude = [0])
 
-(train, train_labels, OH_train_labels), (test, test_labels, OH_test_labels) = load_hyp_spectral_splitted()
-#train, train_labels, test, test_labels, _ = load_data(root_dir='./',dataset_name='PINE', scale_dataset=True, perc_split = [80,20,0])
-#OH_train_labels = one_hot(train_labels,16)
-#OH_test_labels = one_hot(test_labels,16)
+#(train, train_labels, OH_train_labels), (test, test_labels, OH_test_labels) = load_hyp_spectral_splitted()
+train, train_labels, test, test_labels, _ = load_data(root_dir='./',dataset_name='PINE', balance=100, excluded_class=[0,1,7,9,13,16],  scale_dataset=True, perc_split = [80,20,0])
+OH_train_labels = one_hot2(train_labels,16)
+OH_test_labels = one_hot2(test_labels,16)
 
 #print(train.shape, train_labels.shape, test.shape, test_labels.shape)
 print(OH_train_labels)
-print(min(train_labels),min(test_labels))
+print(min(train_labels), max(train_labels),min(test_labels))
 # number of neurons in each layer
 input_num_units = 220
 hidden_num_units = 100
 output_num_units = 16
 # set remaining variables 
-epochs = 20
+epochs = 50
 batch_size = 128
-learning_rate = 0.001
+learning_rate = 0.0001
 nr_batches = len(train)#8194#241
 nr_attributes = 10 * 16
 #'hyp_simple_features.txt', 
 att_data = ['abstract_features_idea1.txt','abstract_features_idea2.txt', 'abstract_features_idea3.txt']
-att_data = ['autoencoder_features_10_e50']
+#att_data = ['autoencoder_features_10_e50']
+att_data = ['perfect_features']
 # att_data = ['abstract_features_idea1']
 
 
-trials = 3
+trials = 5
 results = []
 
 for file in att_data[0:1]:
@@ -79,16 +81,17 @@ for file in att_data[0:1]:
         loss_fn = torch.nn.MSELoss() # TODO: maybe set weights for the classes to balance the loss.
         
         # define optimization algorithm
-        rel_optimizer = torch.optim.Adam(rel_model.parameters(), lr=learning_rate, weight_decay=1e-6)
-        att_optimizer = torch.optim.Adam(att_model.parameters(), lr=learning_rate, weight_decay=1e-5)
+        rel_optimizer = torch.optim.Adam(rel_model.parameters(), lr=learning_rate)
+        att_optimizer = torch.optim.Adam(att_model.parameters(), lr=learning_rate)
        
         #print(len(train))
+        losses = []
         print("train")
         for epoch in range(epochs):# how many times we iterate over the whole dataset
-            
             train_batch = np.split(train,nr_batches)
             label_batch = np.split(train_labels,nr_batches)
             OH_batch = np.split(OH_train_labels,nr_batches)
+            epoch_loss = 0
             for b in range(nr_batches):
                 #print(torch.from_numpy(train.astype(float)).float())
                 x, y = Variable(torch.from_numpy(train_batch[b].astype(float)).float()), Variable(torch.from_numpy(OH_batch[b]).float(), requires_grad=False)
@@ -103,7 +106,7 @@ for file in att_data[0:1]:
                 #print(pred[0], y[0])
                 # get loss
                 loss = loss_fn(pred, y)
-            
+                epoch_loss += loss.data
                 # perform backpropagation
                 att_model.zero_grad()
                 rel_model.zero_grad()
@@ -112,7 +115,8 @@ for file in att_data[0:1]:
                 rel_optimizer.step()
                 
                 
-            print(epoch, "loss", loss.data)
+            print(epoch, "loss", epoch_loss)
+            losses.append(epoch_loss/nr_batches)
             #print(pred[50:55], y[50:55])
         
             if epoch%10 == 0:
@@ -130,7 +134,7 @@ for file in att_data[0:1]:
                 print(loss_fn(pred, y))
                 #print(pred[0], y[0])
                 final_pred = np.argmax(pred.data.numpy(), axis=1)
-                final_pred = [f+1 for f in final_pred]
+                #final_pred = [f+1 for f in final_pred]
                 print(len(train_labels), len(final_pred))
                 print("acc on train set", accuracy_score(train_labels, final_pred))
                 
@@ -145,14 +149,17 @@ for file in att_data[0:1]:
         pred = rel_model(combined)
         print(loss_fn(pred, y))
         final_pred = np.argmax(pred.data.numpy(), axis=1)
-        final_pred = [f+1 for f in final_pred]
+        #final_pred = [f+1 for f in final_pred]
                 
         acc = accuracy_score(test_labels, final_pred)
         print("acc on test set", acc)
         #print(final_pred, test_labels)
-        print(final_pred, test_labels)
+        #print(final_pred, test_labels)
         confusion_matrix(final_pred, test_labels)
         result_row.append(acc)
+        
+        plt.plot(losses)
+        plt.show()
     
     r = result_row
     result_row.append(np.average(r))

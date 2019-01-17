@@ -98,6 +98,7 @@ print(raw_data.shape)
 
 def train():
     data = load_hyp_spectral_preprocessed()
+    print("n:", sum([len(data[k]) for k in data]))
     #data = load_MNIST_raw()
     model = autoencoder()
     criterion = nn.MSELoss()
@@ -260,19 +261,27 @@ def autoencoder_features_mnist(model):
     
     
 def test(model):
-    data = load_hyp_spectral()
+    data = load_hyp_spectral_preprocessed()
     for c in data:
         
-        print(data[c][0])
+        #print(data[c][0])
+        plt.figure(c)
+        plt.subplot(2,1,1)
+        heatmap(list([data[c][0][0:10]]), title="original", x_size=10, y_size = 0.2)
+        
         row = Variable(torch.from_numpy(data[c][0].astype(float)).float())
-        print(model.encode(row))
-        print(model(row))
+        #print(model.encode(row))
+        #print(model(row))
+        #print("data", np.asarray(model(row).data[0:10]))
+        plt.subplot(2,1,2)
+        heatmap([np.asarray(model(row).data[0:10])],title = "reconstruction", x_size=10, y_size = 0.2)
+        
     
-m = train_VAE()
+m = train()
 #test(m)
 
-#autoencoder_features(m)
-VAE_features(m)
+autoencoder_features(m)
+#VAE_features(m)
 #autoencoder_features_mnist(m)
 
 

@@ -24,7 +24,17 @@ def flatten(_list):
         return _list[0]
     else:
         return _list[0] + flatten(_list[1:])
-    
+
+
+def one_hot2(labels, nr_classes):
+    _labels = []
+    for l in labels:
+        #print(l)
+        #print(int(l))
+        _labels.append(np.zeros(shape=(nr_classes)))
+        _labels[-int(1)][int(l)] = 1
+    return np.asarray(_labels)
+
 
 def one_hot(labels, nr_classes):
     _labels = []
@@ -127,6 +137,8 @@ def load_hyp_spectral_splitted(without = [15, 16]):
     f = loadmat("data/indian_pines_gt.mat")
     GT = f['indian_pines_gt']
     
+    #raw_data, GT = balance(raw_data, GT)
+    
     data = {}
     
     for row in range(len(GT)):
@@ -143,6 +155,16 @@ def load_hyp_spectral_splitted(without = [15, 16]):
     #(train, label_train), (test, label_test) = split_train_test(data, classes = list(range(1,16)))
     return split_train_test(data, classes = with_class)#(train, label_train), (test, label_test)
     
+
+def balance(data, GT, max_nr = 100):
+    # select random cases of each class
+    print(GT)
+    data = []
+    for i in range(len(GT)):
+        for j in range(len(GT[i])):
+            continue
+    
+#load_hyp_spectral_splitted(without=[])
 
 def load_hyp_spectral():
     from scipy.io import loadmat
@@ -166,7 +188,7 @@ def load_hyp_spectral():
     return data
 
 def load_hyp_spectral_preprocessed(perc_split = [100,0,0]):
-    X, Y, X_test, y_test, mapping = load_data(root_dir='./',dataset_name='PINE', scale_dataset=True, perc_split = perc_split)
+    X, Y, X_test, y_test, mapping = load_data(root_dir='./',dataset_name='PINE', balance=100, scale_dataset=True, perc_split = perc_split)
     data = {}
     
     for x, y in zip(X,Y):

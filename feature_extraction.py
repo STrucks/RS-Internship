@@ -7,6 +7,7 @@ Created on Tue Oct 30 09:32:12 2018
 
 import numpy as np
 from load_data import load_hyp_spectral
+from utils2 import save_object
 import torch
 
 def extract_simple_features():
@@ -206,8 +207,15 @@ def select_attributes(file):
     # with this selection, we remove 43448 irrelevant features.
 
 
+def perfect_features():
+    features = np.eye(17)
+    f = {}
+    for index, row in enumerate(features):
+        f[str(index)] = row
+    save_object(f, "obj/perfect_features.pkl")
 
 
+perfect_features()
 #select_attributes('abstract_features_idea3.txt')
 
 #extract_abstract_features()    
