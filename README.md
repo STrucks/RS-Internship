@@ -150,7 +150,42 @@ To see if the classifier actually works, I crafted a feature matrix by hand (Ide
 
 ![loss](https://github.com/STrucks/RS-Internship/blob/master/exploration%20imgs/loss_with_perfect_features.png)
 
-We reach an accuracy of about 15% to 20%, which is better than chance (1/11). 
+confusion matrix (100 epochs):
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+
+[346.  83.   0.   0.   0.  28. 938. 282.   0.   0.   0.   0.   0.   0.    0. 905.]
+
+[118.  40. 194.   0. 376. 178. 425.  65. 183.  12.   0.   0.   0.   0.    0. 224.]
+
+[  0.  14.  48. 356.   2.   7.  38.  23.   0. 144.   0.   0.   0.   0.    0.  14.]
+
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+
+[261.   0.   0.   0.   0. 565. 636.  70.   0.   0.   0.   0.   0.   0.    0. 130.]
+
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+
+[  5.   0.   0.   0.   0.  77. 296.  16.   0.   0.   0.   0.   0.   0.    0.  36.]
+
+[  0.   0. 141. 274.   0.   0.   3.   0. 982. 130.   0.   0.   0.   0.    0.   0.]
+
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+
+[  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+
+[  0.   0.   0.   0.   0.  17.  19.  37.   0.   0.   0.   0.   0.   0.    0.  19.]
+
+Accuracy of 25.3% on test set.
+
+We reach an accuracy of about 20 to 25%, which is better than chance (1/11). 
 Learning rate: 0.001, no weight decay, augmentation type = n.
 
 My conclusion is that the classifier should be able to learn the differences, but since the differences are extremely small, it needs to learn either much longer or use a better attribute matrix.
