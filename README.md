@@ -190,3 +190,28 @@ Learning rate: 0.001, no weight decay, augmentation type = n.
 
 My conclusion is that the classifier should be able to learn the differences, but since the differences are extremely small, it needs to learn either much longer or use a better attribute matrix.
 
+### PCA
+
+Doing a principal component analysis on the normalized data, we find out that the first 10 principal components explain more than 92% of the variance. We only take 10 features for now for the sake of comparison with the autoencoder.
+
+The average of each class represented by the 10 PCs:
+
+![PCA features](https://github.com/STrucks/RS-Internship/blob/master/exploration%20imgs/PCA_features.png)
+
+We can already see that the first PC is the most important and starting from the 4th PC, there is not a big difference between the PCs. 
+In fact, the first PC explaines 67%, the second 16%, the third 4%, the fourth 1% of the variance. The other PCs explain less than 1% of the variance.
+
+If we take the PCS features as attribute matrix of the ZSL classifier, we obtain a classification accuracy of 24,9%. This is better than the accuracy of the classifier with the autoencoder features. 
+
+![ZSL classif with PCA features losss](https://github.com/STrucks/RS-Internship/blob/master/exploration%20imgs/loss_with_pca_features.png)
+
+
+
+
+
+
+
+
+
+
+
