@@ -7,7 +7,8 @@ Created on Tue Oct 30 09:32:12 2018
 
 import numpy as np
 from load_data import load_hyp_spectral
-from utils2 import save_object
+from utils2 import save_object, heatmap
+from utils import load_data
 import torch
 
 def extract_simple_features():
@@ -215,7 +216,36 @@ def perfect_features():
     save_object(f, "obj/perfect_features.pkl")
 
 
-perfect_features()
+def pca_features():
+    from sklearn.decomposition import PCA
+    pca = PCA(0.925)
+    train, train_labels, test, test_labels, _ = load_data(root_dir='./',dataset_name='PINE', balance=0, excluded_class=[],  scale_dataset=True, perc_split = [100,0,0])
+    
+    pca.fit(train)
+    avgs = []
+    for c in set(train_labels):
+        row = []
+        for pixel, label in zip(train, train_labels):
+            if label == c:
+                row.append(pixel)
+        avgs.append(np.average(row, 0))
+    print(pca.n_components_)
+    #print(avgs)
+    features = pca.transform(avgs)
+    #print(features)
+    heatmap(features, x_size=1, y_size=0.4)
+    f = {}
+    for index, row in enumerate(features):
+        f[str(index)] = row
+    save_object(f, "obj/pca_features.pkl")
+    """
+    the first 10 PCs explain 92.5% of the variance. We take them as features to keep the nr of features constant.
+    """
+    
+    
+
+#perfect_features()
 #select_attributes('abstract_features_idea3.txt')
 
 #extract_abstract_features()    
+pca_features()    

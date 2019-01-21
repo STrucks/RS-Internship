@@ -46,19 +46,19 @@ input_num_units = 220
 hidden_num_units = 100
 output_num_units = 16
 # set remaining variables 
-epochs = 50
+epochs = 100
 batch_size = 128
 learning_rate = 0.0001
 nr_batches = len(train)#8194#241
 nr_attributes = 10 * 16
 #'hyp_simple_features.txt', 
 att_data = ['abstract_features_idea1.txt','abstract_features_idea2.txt', 'abstract_features_idea3.txt']
-#att_data = ['autoencoder_features_10_e50']
-att_data = ['perfect_features']
+att_data = ['autoencoder_features_10_e50']
+att_data = ['pca_features']
 # att_data = ['abstract_features_idea1']
 
 
-trials = 5
+trials = 1
 results = []
 
 for file in att_data[0:1]:
