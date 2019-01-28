@@ -218,7 +218,7 @@ def perfect_features():
 
 def pca_features():
     from sklearn.decomposition import PCA
-    pca = PCA(0.925)
+    pca = PCA(n_components = 10)
     train, train_labels, test, test_labels, _ = load_data(root_dir='./',dataset_name='PINE', balance=0, excluded_class=[],  scale_dataset=True, perc_split = [100,0,0])
     
     pca.fit(train)
@@ -230,14 +230,15 @@ def pca_features():
                 row.append(pixel)
         avgs.append(np.average(row, 0))
     print(pca.n_components_)
+    print(pca.explained_variance_ratio_, sum(pca.explained_variance_ratio_))
     #print(avgs)
     features = pca.transform(avgs)
     #print(features)
-    heatmap(features, x_size=1, y_size=0.4)
+    #heatmap(features, x_size=1, y_size=0.4)
     f = {}
     for index, row in enumerate(features):
         f[str(index)] = row
-    save_object(f, "obj/pca_features.pkl")
+    #save_object(f, "obj/pca_features.pkl")
     """
     the first 10 PCs explain 92.5% of the variance. We take them as features to keep the nr of features constant.
     """

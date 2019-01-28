@@ -915,7 +915,7 @@ def load_data(root_dir='./',dataset_name='FTIR',scale_dataset=False,shuffle=-1,b
     if y_test.size:
       y_test=y_test-y_train_min
       y_test=y_test.flatten()
-   
+    print(X_train.shape)
     if saved_scaler:
         scaler=pickle.load(open(dataset+'.scaler', 'rb'))
         if return_scaler:

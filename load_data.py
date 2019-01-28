@@ -192,7 +192,7 @@ def load_hyp_spectral_preprocessed(perc_split = [100,0,0]):
     data = {}
     
     for x, y in zip(X,Y):
-        y = int(y)
+        y = int(y)+1
         if y in data:
             data[y].append(x)
         else:

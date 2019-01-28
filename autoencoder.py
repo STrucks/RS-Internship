@@ -14,10 +14,40 @@ import torch.nn.functional as F
 import pickle 
 from utils2 import heatmap
 
-num_epochs = 50
+num_epochs = 20
 batch_size = 128
 learning_rate = 1e-3
 data_size = 220
+
+class CNN_autoencoder(nn.Module): # like https://medium.com/@vaibhaw.vipul/building-autoencoder-in-pytorch-34052d1d280c
+    def __init__(self):
+        super(CNN_autoencoder,self).__init__()
+        
+        self.encoder = nn.Sequential(
+            nn.Conv1d(1, 1, kernel_size=2, stride=2),
+            nn.ReLU(True),
+            nn.Linear(110,10),
+            #nn.ReLU(True)
+            )
+
+        self.decoder = nn.Sequential(             
+            nn.Linear(10,110),
+            nn.ReLU(True),
+            nn.ConvTranspose1d(1,1,kernel_size=2,stride=2)
+            )
+
+    def forward(self,x):
+        x = np.reshape(x, newshape=(1,1,220))
+        x = self.encoder(x)
+        x = self.decoder(x)
+        x = np.squeeze(x)
+        return x
+    
+    def encode(self, x):
+        x = np.reshape(x, newshape=(1,1,220))
+        x = self.encoder(x)
+        x = np.squeeze(x)
+        return x
 
 class autoencoder(nn.Module):
     def __init__(self):
@@ -102,7 +132,14 @@ def train():
     #data = load_MNIST_raw()
     model = autoencoder()
     criterion = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-5)
+    """
+    SGD mostly finds all the same features for all classes as optimal solution, but sometimes not. In these cases, the feature map looks promissing.
+    Adam finds solutions with a smaller loss, and the features look also more promissing.
+    
+    
+    """
+    
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     print("start")
     losses = []
     for epoch in range(num_epochs):
@@ -212,15 +249,38 @@ def autoencoder_features(model):
         for row in data[c]:
             row = Variable(torch.from_numpy(row.astype(float)).float())
             result = model.encode(row).data.numpy()
+            #print(result.shape)
             results.append(result)
         avg = np.average(results, axis=0)
-        print(c, avg[0:5])
+        #print(c, avg[0:5])
         avgs[c] = avg
     #print(avgs)
-    print([list(avgs[key]) for key in avgs])
+    #print([list(avgs[key]) for key in avgs])
     heatmap([list(avgs[key]) for key in avgs])
     save_object(avgs, "obj/autoencoder_features_10_e50.pkl")
   
+def autoencoder_features2(model):
+    data = load_hyp_spectral_preprocessed()
+    avgs = {}
+    print(data.keys())
+    for c in range(1,17):
+        #c = str(c)
+        avg = np.zeros(220,)
+        if c in data.keys():
+            for row in data[c]:
+                avg += np.asarray(row)
+            avg /= len(data[c])
+            print(avg[0:5])
+            avg = Variable(torch.from_numpy(avg.astype(float)).float())
+            result = model.encode(avg).data.numpy()
+            
+            #print(c, avg[0:5])
+            avgs[str(c)] = result
+    #print(avgs)
+    #print([list(avgs[key]) for key in avgs])
+    print(avgs)
+    heatmap([list(avgs[key]) for key in avgs])
+    save_object(avgs, "obj/autoencoder_features_10_e50.pkl")
 
 def VAE_features(model):
     data = load_hyp_spectral()
@@ -280,7 +340,7 @@ def test(model):
 m = train()
 #test(m)
 
-autoencoder_features(m)
+autoencoder_features2(m)
 #VAE_features(m)
 #autoencoder_features_mnist(m)
 

@@ -9,7 +9,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import pickle 
 
-def confusion_matrix(y, t, size = 16):
+def confusion_matrix(y, t, size = 16, image = False):
     print("Confusion Matrix")
     #print(y,t)
     
@@ -17,6 +17,9 @@ def confusion_matrix(y, t, size = 16):
     for ys, ts in zip(y,t):
         matrix[int(ys)-1,int(ts)-1] += 1
     print(matrix)
+    if image:
+        plt.imshow(matrix, cmap='hot', interpolation='nearest')
+        plt.show()
     
 def batch(iterable, n=1):
     l = len(iterable)
