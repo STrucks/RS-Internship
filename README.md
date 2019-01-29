@@ -46,7 +46,7 @@ Typical loss of the classifier:
 
 
 ### Experiments:
-| Approach           | leaft-out class | mean accuracy on test set | std of accuracy | mean accuracy on left-out classes
+| Approach           | left-out class | mean accuracy on test set | std of accuracy | mean accuracy on left-out classes
 |:-----------: |:------------------:|:------------------:|:------------------:|:------------------:|
 |     idea 1                                     | - | 30.5% | 2.45% | - |
 |     idea 1                                     | 2 | 28.9% | 1.53% | 0.0%|
