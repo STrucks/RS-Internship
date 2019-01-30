@@ -50,12 +50,12 @@ def show_data_distr():
 def show_attribute_matrix():
     import seaborn as sns
     
-    plt.figure(figsize=(30,20))
+    plt.figure(figsize=(10,20))
     plt.subplot(4,1,1)
     plt.title("idea 1")
     file = "abstract_features_idea1_selected"
     att = load_attributes(file)
-    att_matrix = np.asarray([att[i][0:50] for i in range(1,17)])
+    att_matrix = np.asarray([att[str(i)][0:10] for i in range(1,17)])
     print(att_matrix.shape)
     ax1 = sns.heatmap(att_matrix, linewidth=1)
     
@@ -63,23 +63,33 @@ def show_attribute_matrix():
     plt.title("idea 2")
     file = "abstract_features_idea2_selected"
     att = load_attributes(file)
-    att_matrix = np.asarray([att[i][0:50] for i in range(1,17)])
+    att_matrix = np.asarray([att[str(i)][0:10] for i in range(1,17)])
     ax2 = sns.heatmap(att_matrix, linewidth=1)
     
-    plt.subplot(4,1,3)
+    """
+    plt.subplot(5,1,3)
     plt.title("idea 3")
     file = "abstract_features_idea3_selected"
     att = load_attributes(file)
     att_matrix = np.asarray([att[i][0:50] for i in range(1,17)])
     ax3 = sns.heatmap(att_matrix, linewidth=1)
-    
-    plt.subplot(4,1,4)
-    plt.title("autoencoder_10_feat_10_epochs")
-    file = "autoencoder_features_10_e10"
+    """
+    plt.subplot(4,1,3)
+    plt.title("autoencoder_features_10_e50")
+    file = "autoencoder_features_10_e50"
     att = load_attributes(file)
     att_matrix = np.asarray([att[str(i)] for i in range(1,17)])
     ax4 = sns.heatmap(att_matrix, linewidth=1)
     
+    plt.subplot(4,1,4)
+    plt.title("VAE_features_10_e50")
+    file = "VAE_features_10_e50"
+    att = load_attributes(file)
+    att_matrix = np.asarray([att[str(i)] for i in range(1,17)])
+    ax4 = sns.heatmap(att_matrix, linewidth=1)
+    
+    
+    
        
     
-show_data_distr()
+show_attribute_matrix()

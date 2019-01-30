@@ -19,7 +19,7 @@ def confusion_matrix(y, t, size = 16, image = False):
     print(matrix)
     if image:
         plt.imshow(matrix, cmap='hot', interpolation='nearest')
-        plt.show()
+        #plt.show()
     
 def batch(iterable, n=1):
     l = len(iterable)

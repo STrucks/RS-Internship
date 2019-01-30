@@ -213,6 +213,8 @@ def loss_function(recon_x, x, mu, logvar):
 
 
 def train_VAE():
+    data = load_hyp_spectral_preprocessed()
+    print("n:", sum([len(data[k]) for k in data]))
     model = VAE()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     
@@ -283,10 +285,9 @@ def autoencoder_features2(model):
     save_object(avgs, "obj/autoencoder_features_10_e50.pkl")
 
 def VAE_features(model):
-    data = load_hyp_spectral()
+    data = load_hyp_spectral_preprocessed()
     avgs = {}
     for c in range(1,17):
-        c = str(c)
         results = []
         for row in data[c]:
             row = Variable(torch.from_numpy(row.astype(float)).float())
@@ -294,7 +295,7 @@ def VAE_features(model):
             results.append(result.data.numpy())
         avg = np.average(results, axis=0)
         print(c, avg[0:5])
-        avgs[c] = avg
+        avgs[str(c)] = avg
     #print(avgs)
     print([list(avgs[key]) for key in avgs])
     heatmap([list(avgs[key]) for key in avgs])
@@ -337,11 +338,11 @@ def test(model):
         heatmap([np.asarray(model(row).data[0:10])],title = "reconstruction", x_size=10, y_size = 0.2)
         
     
-m = train()
+m = train_VAE()
 #test(m)
 
-autoencoder_features2(m)
-#VAE_features(m)
+#autoencoder_features2(m)
+VAE_features(m)
 #autoencoder_features_mnist(m)
 
 

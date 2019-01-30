@@ -87,7 +87,7 @@ def extract_abstract_features():
 #    vgg16_feature = model.predict(img_data)
     
     # Idea 1:
-    if False:
+    if True:
         print("Idea 1")
         with open("abstract_features_idea1.txt", 'w') as f:
             for c in range(1,17):
@@ -202,9 +202,14 @@ def select_attributes(file):
     for key in attributes:
         print(key)
         # turns out, the feature vectors are not the same length, so we take the minimum of 43008 or just the first 1000.
-        sel_attributes[key] = [attributes[key][i] for i in range(1000) if i not in zero_features]
+        att = [attributes[key][i] for i in range(1000) if i not in zero_features]
+        # normalize them:
+        att = np.asarray(att)
+        print("shape", att.shape)
+        att = (att - att.mean())/att.std()
+        sel_attributes[str(key)] = att
     # save the feature matrix, bc it runs forever:
-    save_obj(sel_attributes, file.split(".")[0] + "_selected")
+    save_object(sel_attributes, "obj/" +file.split(".")[0] + "_selected.pkl")
     # with this selection, we remove 43448 irrelevant features.
 
 
@@ -246,7 +251,7 @@ def pca_features():
     
 
 #perfect_features()
-#select_attributes('abstract_features_idea3.txt')
+select_attributes('abstract_features_idea2.txt')
 
 #extract_abstract_features()    
-pca_features()    
+#pca_features()    
